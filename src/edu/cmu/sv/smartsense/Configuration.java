@@ -15,6 +15,7 @@ questions.
 **/
 package edu.cmu.sv.smartsense;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class Configuration.
  */

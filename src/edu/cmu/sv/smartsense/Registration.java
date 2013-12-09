@@ -1,14 +1,26 @@
+/*
+ * 
+ */
 package edu.cmu.sv.smartsense;
 
 import com.google.gson.JsonObject;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class Registration.
+ */
 public class Registration {
 	
 	
 	
 	
 	
-	 Registration(String device_id)
+	 /**
+ 	 * Instantiates a new registration.
+ 	 *
+ 	 * @param device_id the device_id
+ 	 */
+ 	Registration(String device_id)
 	{
 		
 		JsonObject json = populateJson(device_id);
@@ -25,7 +37,13 @@ public class Registration {
  * 
  * 	 
  */
-	 private JsonObject populateJson(String device_id)
+	 /**
+ * Populate json.
+ *
+ * @param device_id the device_id
+ * @return the json object
+ */
+private JsonObject populateJson(String device_id)
 	 {
 		 JsonObject json= new JsonObject();
 		 json.addProperty("device_id",device_id);
@@ -45,7 +63,12 @@ public class Registration {
 		 
 	 }
 	 
-	 private void addDevice(JsonObject json)
+	 /**
+ 	 * Adds the device.
+ 	 *
+ 	 * @param json the json
+ 	 */
+ 	private void addDevice(JsonObject json)
 	 {
 		 SdasRequest sdasRequest = new SdasRequest(SdasRequest.ADD_DEVICE, json);
 		 new SdasPlatformFacacde().execute(sdasRequest);

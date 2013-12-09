@@ -1,10 +1,20 @@
+/*
+ * 
+ */
 package edu.cmu.sv.smartsense;
 
 import android.os.AsyncTask;
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class SdasPlatformFacacde.
+ */
 public class SdasPlatformFacacde extends AsyncTask<SdasRequest, Void, Void> {
 
+	/* (non-Javadoc)
+	 * @see android.os.AsyncTask#doInBackground(Params[])
+	 */
 	@Override
 	protected Void doInBackground(SdasRequest... params) {
 		SdasRequest sdasRequest = params[0];
@@ -16,15 +26,7 @@ public class SdasPlatformFacacde extends AsyncTask<SdasRequest, Void, Void> {
 		}
 		
 		System.out.println(sdasResponse.responseBody);
-		
-	//	if(sdasResponse.getResponseCode() == 200 && sdasResponse.getResponseBody().equals("saved"))
-		//{
-	//		System.out.println("Sensor reading saved");
-	//	}
-	//	else
-	//	{
-	//		System.out.println("Failed to save sensor reading");
-	//	}
+
 		return null;
 	}
 	

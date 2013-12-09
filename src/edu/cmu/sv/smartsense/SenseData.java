@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class SensorDataPublisher.
  */
@@ -227,7 +228,22 @@ SensorEventListener {
 
 	}
 
+	/**
+	 * The listener interface for receiving basicLocation events.
+	 * The class that is interested in processing a basicLocation
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addBasicLocationListener<code> method. When
+	 * the basicLocation event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see BasicLocationEvent
+	 */
 	private class BasicLocationListener implements LocationListener {
+		
+		/* (non-Javadoc)
+		 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+		 */
 		@Override
 		public void onLocationChanged(Location location) {
 			if (location != null) {
@@ -239,14 +255,23 @@ SensorEventListener {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see android.location.LocationListener#onProviderDisabled(java.lang.String)
+		 */
 		@Override
 		public void onProviderDisabled(String provider) {
 		}
 
+		/* (non-Javadoc)
+		 * @see android.location.LocationListener#onProviderEnabled(java.lang.String)
+		 */
 		@Override
 		public void onProviderEnabled(String provider) {
 		}
 
+		/* (non-Javadoc)
+		 * @see android.location.LocationListener#onStatusChanged(java.lang.String, int, android.os.Bundle)
+		 */
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 		}

@@ -1,3 +1,6 @@
+/*
+ * 
+ */
 package edu.cmu.sv.smartsense;
 
 import java.io.BufferedReader;
@@ -12,8 +15,20 @@ import java.net.URL;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class HttpHelper.
+ */
 public class HttpHelper {
 
+	/**
+	 * Http post json.
+	 *
+	 * @param urlStr the url str
+	 * @param jsonObject the json object
+	 * @return the sdas response
+	 * @throws Exception the exception
+	 */
 	private static SdasResponse httpPostJson(String urlStr,
 			JsonObject jsonObject) throws Exception {
 
@@ -63,6 +78,13 @@ public class HttpHelper {
 		return sdasResponse;
 	}
 
+	/**
+	 * Send data.
+	 *
+	 * @param requestType the request type
+	 * @param json the json
+	 * @return the sdas response
+	 */
 	public static SdasResponse sendData(String requestType, JsonObject json) {
 		try {
 			String url = Constants.DEBUG_URL + requestType;
