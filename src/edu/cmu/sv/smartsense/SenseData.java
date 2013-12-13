@@ -12,7 +12,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 Please contact http://www.cmu.edu/silicon-valley/ if you have any 
 questions.
-**/
+ **/
 package edu.cmu.sv.smartsense;
 
 import java.util.ArrayList;
@@ -43,36 +43,40 @@ import com.google.gson.JsonObject;
 /**
  * The Class SensorDataPublisher.
  */
-public class SenseData extends Activity implements
-SensorEventListener {
+public class SenseData extends Activity implements SensorEventListener,LocationListener {
 
 	/** The interval_seconds. */
-	private final int interval_seconds = 5 * 1000;
-	
+	private final int interval_seconds = 10 * 1000;
+
 	/** The m sensor manager. */
 	private SensorManager mSensorManager;
-	
+
 	/** The m sensor list. */
 	private List<Sensor> mSensorList;
-	
+
 	/** The ht. */
 	private Hashtable<Integer, float[]> ht;
-	
+
 	/** The available sensors. */
 	private Sensor[] availableSensors;
 
 	/** The sensor name. */
 	HashMap<Integer, String> sensorName = Constants.sensorNameMapping;
 	
- 
+	private String lat,lng;
+	
+	LocationManager lm;
+	
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
 	public final void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		register_device();
+		
 
 		setContentView(R.layout.activity_sense_data);
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -82,13 +86,18 @@ SensorEventListener {
 
 		registerSensor(mSensorList);
 
-		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		LocationListener ll = new BasicLocationListener();
-		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, ll);
-		
-		TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-		Configuration.getInstance().set_device_id(telephonyManager.getDeviceId());
+		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
+		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		Configuration.getInstance().set_device_id(
+				telephonyManager.getDeviceId());
+		
+		
+		lat = lng = "0";
+		
+		register_device();
+		
 	}
 
 	/**
@@ -98,7 +107,17 @@ SensorEventListener {
 		TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		String imeistring = telephonyManager.getDeviceId();
 		Configuration.getInstance().set_device_id(imeistring);
-		new Registration(imeistring);
+		if(lm != null)
+		{
+			Location l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			if(l != null)
+			{
+			this.lat = l.getLatitude() + "";
+			this.lng = l.getLongitude() + "";
+			Log.d("LOCATION", " LAT \t" + this.lat + "LONG\t" + this.lng);
+			new Registration(imeistring,lat,lng);
+			}
+		}
 	}
 
 	// Method to register sensors
@@ -141,6 +160,27 @@ SensorEventListener {
 		while (itr.hasNext()) {
 			Integer key = itr.next(); // Key in the sensor type map
 			float[] value = ht.get(key); // Float array fetched from sensors
+			if(value[1] != 0.0 || value[2]!= 0.0)
+			{
+				JsonObject sensorDataJson = new JsonObject();
+
+				sensorDataJson.addProperty("id", Configuration.getInstance()
+						.get_device_id());
+				sensorDataJson.addProperty(sensorName.get(key) +"Y", value[1]);
+				sensorDataJson.addProperty("timestamp", timestamp);
+
+				sensorDataJsons.add(sensorDataJson);
+				
+				
+				sensorDataJson = new JsonObject();
+
+				sensorDataJson.addProperty("id", Configuration.getInstance()
+						.get_device_id());
+				sensorDataJson.addProperty(sensorName.get(key) +"Z", value[2]);
+				sensorDataJson.addProperty("timestamp", timestamp);
+
+				sensorDataJsons.add(sensorDataJson);
+			}
 
 			JsonObject sensorDataJson = new JsonObject();
 
@@ -158,7 +198,9 @@ SensorEventListener {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onResume()
 	 */
 	protected void onResume() {
@@ -169,7 +211,9 @@ SensorEventListener {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see android.app.Activity#onPause()
 	 */
 	protected void onPause() {
@@ -177,8 +221,12 @@ SensorEventListener {
 		mSensorManager.unregisterListener(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see android.hardware.SensorEventListener#onAccuracyChanged(android.hardware.Sensor, int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.hardware.SensorEventListener#onAccuracyChanged(android.hardware
+	 * .Sensor, int)
 	 */
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO: Adding a parameter for accuracy to the sensor reading being
@@ -201,82 +249,92 @@ SensorEventListener {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see android.hardware.SensorEventListener#onSensorChanged(android.hardware.SensorEvent)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * android.hardware.SensorEventListener#onSensorChanged(android.hardware
+	 * .SensorEvent)
 	 */
 	public void onSensorChanged(SensorEvent event) {
-		
-		//Publish only after significant difference. Logic missing
+
+		// Publish only after significant difference. Logic missing
 
 		ht.put(event.sensor.getType(), event.values);
-		
-			List<JsonObject> list_json = getSensorJsons();
-			Iterator<JsonObject> iter = list_json.iterator();
+
+		List<JsonObject> list_json = getSensorJsons();
+		Iterator<JsonObject> iter = list_json.iterator();
+
+		try {
 
 			while (iter.hasNext()) {
 				JsonObject jsonObject = iter.next();
-				Log.d("json obj populated", new Gson().toJson(jsonObject));
+			//	Log.d("json obj populated", new Gson().toJson(jsonObject));
 
 				SdasRequest req = new SdasRequest(
 						SdasRequest.PUBLISH_SENSOR_READING, jsonObject);
 
 				new SdasPlatformFacacde().execute(req);
 			}
-			
+			Thread.sleep(interval_seconds);
+		} catch (Exception e) {
 
-		
-
+		}
 	}
-
-	/**
-	 * The listener interface for receiving basicLocation events.
-	 * The class that is interested in processing a basicLocation
-	 * event implements this interface, and the object created
-	 * with that class is registered with a component using the
-	 * component's <code>addBasicLocationListener<code> method. When
-	 * the basicLocation event occurs, that object's appropriate
-	 * method is invoked.
-	 *
-	 * @see BasicLocationEvent
-	 */
-	private class BasicLocationListener implements LocationListener {
 		
-		/* (non-Javadoc)
-		 * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.location.LocationListener#onLocationChanged(android.location
+		 * .Location)
 		 */
 		@Override
 		public void onLocationChanged(Location location) {
-			if (location != null) {
-				Log.d("LOCATION CHANGED", location.getLatitude() + "");
-				Log.d("LOCATION CHANGED", location.getLongitude() + "");
-				Toast.makeText(SenseData.this,
-						location.getLatitude() + "" + location.getLongitude(),
-						Toast.LENGTH_LONG).show();
-			}
+//			if (location != null) {
+//				
+//				Log.d("LOCATION CHANGED", location.getLatitude() + "");
+//				Log.d("LOCATION CHANGED", location.getLongitude() + "");
+//				this.lat = location.getLatitude() + "";
+//				this.lng = location.getLongitude() + "";
+//				register_device();
+//				Toast.makeText(SenseData.this,
+//						location.getLatitude() + "" + location.getLongitude(),
+//						Toast.LENGTH_LONG).show();
+//			}
 		}
 
-		/* (non-Javadoc)
-		 * @see android.location.LocationListener#onProviderDisabled(java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.location.LocationListener#onProviderDisabled(java.lang.String
+		 * )
 		 */
 		@Override
 		public void onProviderDisabled(String provider) {
 		}
 
-		/* (non-Javadoc)
-		 * @see android.location.LocationListener#onProviderEnabled(java.lang.String)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.location.LocationListener#onProviderEnabled(java.lang.String)
 		 */
 		@Override
 		public void onProviderEnabled(String provider) {
 		}
 
-		/* (non-Javadoc)
-		 * @see android.location.LocationListener#onStatusChanged(java.lang.String, int, android.os.Bundle)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * android.location.LocationListener#onStatusChanged(java.lang.String,
+		 * int, android.os.Bundle)
 		 */
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 		}
 	}
-}
 
-
-
+	

@@ -20,10 +20,10 @@ public class Registration {
  	 *
  	 * @param device_id the device_id
  	 */
- 	Registration(String device_id)
+ 	Registration(String device_id, String lat, String lng)
 	{
-		
-		JsonObject json = populateJson(device_id);
+ 		System.out.println("lat" + lat + "lng" + lng);
+		JsonObject json = populateJson(device_id,lat,lng);
 		addDevice(json);
 	}
 	 
@@ -43,19 +43,19 @@ public class Registration {
  * @param device_id the device_id
  * @return the json object
  */
-private JsonObject populateJson(String device_id)
+private JsonObject populateJson(String device_id, String lat, String lng)
 	 {
 		 JsonObject json= new JsonObject();
 		 json.addProperty("device_id",device_id);
 		 json.addProperty("device_agent","android");
-		 json.addProperty("network_address","127.0.0.1");
-		 json.addProperty("location_description", "dynamic");
+		 json.addProperty("network_address",device_id);
+		 json.addProperty("location_description", "lat:"+ lat + "long:"+ lng);
 
-		 json.addProperty("latitude","0");
-		 json.addProperty("longitude","0");
+		 json.addProperty("latitude",lat);
+		 json.addProperty("longitude",lng);
 		 json.addProperty("altitude","0");
 		 json.addProperty("position_format_system", "");
-		 json.addProperty("user_defined_fields", "testing");
+		 json.addProperty("user_defined_fields", "{ uri : "+ device_id + "}")	;
 		 
 		 return json;
 		 
@@ -72,6 +72,7 @@ private JsonObject populateJson(String device_id)
 	 {
 		 SdasRequest sdasRequest = new SdasRequest(SdasRequest.ADD_DEVICE, json);
 		 new SdasPlatformFacacde().execute(sdasRequest);
+		
 		 
 		 // Will not work for new API need to handle the response code here
 //		 if(sdasResponse.getResponseCode() == 200 && sdasResponse.getResponseBody().equals("device saved"))

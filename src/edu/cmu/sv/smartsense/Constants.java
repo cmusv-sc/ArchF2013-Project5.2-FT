@@ -42,7 +42,7 @@ public final class Constants {
 	public final static HashMap<Integer, String> sensorNameMapping;
 	static {
 		sensorNameMapping = new HashMap<Integer, String>();
-		sensorNameMapping.put(Sensor.TYPE_ACCELEROMETER, "AccelerometerX");
+		sensorNameMapping.put(Sensor.TYPE_ACCELEROMETER, "Accelerometer");
 		sensorNameMapping.put(Sensor.TYPE_AMBIENT_TEMPERATURE, "Temperature");
 		sensorNameMapping.put(Sensor.TYPE_GRAVITY, "Gravity");
 		sensorNameMapping.put(Sensor.TYPE_GYROSCOPE, "Gyroscope");
@@ -66,23 +66,6 @@ public final class Constants {
 
 	}
 	
-//	public static String serverURL(int env)
-//	{
-//		switch(env)
-//		{
-//		case (PROUDUCTION):
-//			return PRODUCITON_URL;
-//		
-//		case (DEBUG):
-//			return DEBUG_URL;
-//		
-//		case (TEST):
-//			return TEST_URL;
-//		default:
-//			return null;
-//		}
-//	}
-//	
 	
 
 }
