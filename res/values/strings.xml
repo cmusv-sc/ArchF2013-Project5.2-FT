@@ -3,6 +3,24 @@
 
     <string name="app_name">SmartSense</string>
     <string name="action_settings">Settings</string>
+    
+    <string-array name="sensor_array">
+        <item>Accelerometer</item>
+        <item>Humidity</item>
+        <item>Light</item>
+        <item>Temperature</item>
+        <item>Gyroscope</item>
+        <item>GPS</item>
+    </string-array>
+    
+    <string-array name="sensor_value_array">
+        <item>true</item>
+        <item>true</item>
+        <item>true</item>
+        <item>true</item>
+        <item>true</item>
+        <item>true</item>
+    </string-array>
 
 
 </resources>

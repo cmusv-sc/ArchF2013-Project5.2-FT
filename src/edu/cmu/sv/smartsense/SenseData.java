@@ -15,12 +15,11 @@ questions.
  **/
 package edu.cmu.sv.smartsense;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,10 +33,8 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import android.view.Menu;
+import android.view.MenuItem;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -67,15 +64,30 @@ public class SenseData extends Activity implements SensorEventListener,LocationL
 	
 	LocationManager lm;
 	
+	ExecutorService httpRequestServicePool;
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+		case R.id.action_settings:
+		{
+			 getFragmentManager().beginTransaction()
+	          .replace(android.R.id.content, new UserSettings())
+	          .commit();
+			 break;
+		}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
+		}
+		return super.onOptionsItemSelected(item);
+	  
+	}
+	
+	
+	
 	@Override
 	public final void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		 
 		
 
 		setContentView(R.layout.activity_sense_data);
@@ -97,7 +109,15 @@ public class SenseData extends Activity implements SensorEventListener,LocationL
 		lat = lng = "0";
 		
 		register_device();
+	
+		httpRequestServicePool = Executors.newFixedThreadPool(Constants.MAX_THREADS);
 		
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
 	}
 
 	/**
@@ -145,58 +165,59 @@ public class SenseData extends Activity implements SensorEventListener,LocationL
 	 * 
 	 * @return the sensor jsons
 	 */
-	public List<JsonObject> getSensorJsons() {
-		// For initial conditions where ht might be NULL
-		if (ht == null || ht.size() == 0) {
-			return null;
-		}
-
-		Date date = new java.util.Date();
-		long timestamp = date.getTime();
-
-		List<JsonObject> sensorDataJsons = new ArrayList<JsonObject>();
-
-		Iterator<Integer> itr = ht.keySet().iterator();
-		while (itr.hasNext()) {
-			Integer key = itr.next(); // Key in the sensor type map
-			float[] value = ht.get(key); // Float array fetched from sensors
-			if(value[1] != 0.0 || value[2]!= 0.0)
-			{
-				JsonObject sensorDataJson = new JsonObject();
-
-				sensorDataJson.addProperty("id", Configuration.getInstance()
-						.get_device_id());
-				sensorDataJson.addProperty(sensorName.get(key) +"Y", value[1]);
-				sensorDataJson.addProperty("timestamp", timestamp);
-
-				sensorDataJsons.add(sensorDataJson);
-				
-				
-				sensorDataJson = new JsonObject();
-
-				sensorDataJson.addProperty("id", Configuration.getInstance()
-						.get_device_id());
-				sensorDataJson.addProperty(sensorName.get(key) +"Z", value[2]);
-				sensorDataJson.addProperty("timestamp", timestamp);
-
-				sensorDataJsons.add(sensorDataJson);
-			}
-
-			JsonObject sensorDataJson = new JsonObject();
-
-			sensorDataJson.addProperty("id", Configuration.getInstance()
-					.get_device_id());
-			// TODO: Note value[0] only provides the X co ordinate of 3d sensors
-			// like Gyroscope
-			sensorDataJson.addProperty(sensorName.get(key), value[0]);
-			sensorDataJson.addProperty("timestamp", timestamp);
-
-			sensorDataJsons.add(sensorDataJson);
-		}
-
-		return sensorDataJsons;
-
-	}
+//	public List<JsonObject> getSensorJsons() {
+//		// For initial conditions where ht might be NULL
+//		if (ht == null || ht.size() == 0) {
+//			return null;
+//		}
+//
+//		Date date = new java.util.Date();
+//		long timestamp = date.getTime();
+//
+//		//List<JsonObject> sensorDataJsons = new ArrayList<JsonObject>();
+//
+//		Iterator<Integer> itr = ht.keySet().iterator();
+//		while (itr.hasNext()) {
+//			Integer key = itr.next(); // Key in the sensor type map
+//			float[] value = ht.get(key); // Float array fetched from sensors
+//			if(value[1] != 0.0 || value[2]!= 0.0)
+//			{
+//				JsonObject sensorDataJson = new JsonObject();
+//
+//				sensorDataJson.addProperty("id", Configuration.getInstance()
+//						.get_device_id());
+//				sensorDataJson.addProperty(sensorName.get(key) +"Y", value[1]);
+//				sensorDataJson.addProperty("timestamp", timestamp);
+//
+//			//	sensorDataJsons.add(sensorDataJson);
+//				
+//				
+//				sensorDataJson = new JsonObject();
+//				
+//
+//				sensorDataJson.addProperty("id", Configuration.getInstance()
+//						.get_device_id());
+//				sensorDataJson.addProperty(sensorName.get(key) +"Z", value[2]);
+//				sensorDataJson.addProperty("timestamp", timestamp);
+//
+//				//sensorDataJsons.add(sensorDataJson);
+//			}
+//
+//	//		JsonObject sensorDataJson = new JsonObject();
+//
+////			sensorDataJson.addProperty("id", Configuration.getInstance()
+//			//		.get_device_id());
+//			// TODO: Note value[0] only provides the X co ordinate of 3d sensors
+//			// like Gyroscope
+//	//		sensorDataJson.addProperty(sensorName.get(key), value[0]);
+//		//	sensorDataJson.addProperty("timestamp", timestamp);
+//
+//		//	sensorDataJsons.add(sensorDataJson);
+//		}
+//
+//		return sensorDataJsons;
+//
+//	}
 
 	/*
 	 * (non-Javadoc)
@@ -248,6 +269,14 @@ public class SenseData extends Activity implements SensorEventListener,LocationL
 			return null;
 
 	}
+	
+	public void pushData(String sensorName, float[] sensorValues)
+	{
+		httpRequestServicePool.execute(new SensorServerRequest(sensorName,sensorValues));
+		
+		
+	}
+	
 
 	/*
 	 * (non-Javadoc)
@@ -258,28 +287,32 @@ public class SenseData extends Activity implements SensorEventListener,LocationL
 	 */
 	public void onSensorChanged(SensorEvent event) {
 
-		// Publish only after significant difference. Logic missing
 
-		ht.put(event.sensor.getType(), event.values);
+		
+		final int type = event.sensor.getType();
+		final float val[] = event.values;
 
-		List<JsonObject> list_json = getSensorJsons();
-		Iterator<JsonObject> iter = list_json.iterator();
-
-		try {
-
-			while (iter.hasNext()) {
-				JsonObject jsonObject = iter.next();
-			//	Log.d("json obj populated", new Gson().toJson(jsonObject));
-
-				SdasRequest req = new SdasRequest(
-						SdasRequest.PUBLISH_SENSOR_READING, jsonObject);
-
-				new SdasPlatformFacacde().execute(req);
-			}
-			Thread.sleep(interval_seconds);
-		} catch (Exception e) {
-
-		}
+		
+// Use the below stuff to decide what data to push
+//		switch(type)
+//		{
+//		case Sensor.TYPE_ACCELEROMETER: break;
+//		case Sensor.TYPE_AMBIENT_TEMPERATURE: break;
+//		case Sensor.TYPE_GEOMAGNETIC_ROTATION_VECTOR: break;
+//		case Sensor.TYPE_LIGHT: {
+//				break;
+//		}
+//		case Sensor.TYPE_GYROSCOPE: break;
+//		case Sensor.TYPE_STEP_COUNTER: break; 
+//		case Sensor.TYPE_RELATIVE_HUMIDITY: break;
+//		case Sensor.TYPE_STEP_DETECTOR: break;
+//		case Sensor.TYPE_PRESSURE: break;
+//		}
+		
+		pushData(Constants.sensorNameMapping.get(type), val);
+		
+		
+		
 	}
 		
 		/*
@@ -291,26 +324,9 @@ public class SenseData extends Activity implements SensorEventListener,LocationL
 		 */
 		@Override
 		public void onLocationChanged(Location location) {
-//			if (location != null) {
-//				
-//				Log.d("LOCATION CHANGED", location.getLatitude() + "");
-//				Log.d("LOCATION CHANGED", location.getLongitude() + "");
-//				this.lat = location.getLatitude() + "";
-//				this.lng = location.getLongitude() + "";
-//				register_device();
-//				Toast.makeText(SenseData.this,
-//						location.getLatitude() + "" + location.getLongitude(),
-//						Toast.LENGTH_LONG).show();
-//			}
-		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * android.location.LocationListener#onProviderDisabled(java.lang.String
-		 * )
-		 */
+		}
+		
 		@Override
 		public void onProviderDisabled(String provider) {
 		}

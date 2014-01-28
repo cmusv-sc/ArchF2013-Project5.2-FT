@@ -24,6 +24,8 @@ public final class Constants {
 	/** The Constant TEST. */
 	public static final int TEST = 0x03;
 	
+	public static final int MAX_THREADS = 10;
+	
 	
 	
 	/** The Constant DEBUG_URL. */

@@ -11,6 +11,8 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -20,6 +22,8 @@ import com.google.gson.JsonObject;
  * The Class HttpHelper.
  */
 public class HttpHelper {
+	
+	
 
 	/**
 	 * Http post json.
@@ -55,7 +59,7 @@ public class HttpHelper {
 		SdasResponse sdasResponse = new SdasResponse(
 				connection.getResponseCode());
 
-		// Change for new API level
+		
 		if (connection.getResponseCode() != 200) {
 			throw new IOException(connection.getResponseMessage());
 		}

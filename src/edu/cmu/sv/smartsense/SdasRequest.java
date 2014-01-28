@@ -25,43 +25,6 @@ public class SdasRequest {
 	
 	/** The json. */
 	private JsonObject json;
-	
-	
-	/**
-	 * Gets the request type.
-	 *
-	 * @return the request type
-	 */
-	public String getRequestType() {
-		return requestType;
-	}
-
-	/**
-	 * Sets the request type.
-	 *
-	 * @param requestType the new request type
-	 */
-	public void setRequestType(String requestType) {
-		this.requestType = requestType;
-	}
-
-	/**
-	 * Gets the json.
-	 *
-	 * @return the json
-	 */
-	public JsonObject getJson() {
-		return json;
-	}
-
-	/**
-	 * Sets the json.
-	 *
-	 * @param json the new json
-	 */
-	public void setJson(JsonObject json) {
-		this.json = json;
-	}
 
 	
 	/**
@@ -73,18 +36,14 @@ public class SdasRequest {
 	public SdasRequest(String requestType, JsonObject json) {
 		this.requestType = requestType;
 		this.json = json;
+		
+		
 	}
 	
-	
-	/**
-	 * Perform.
-	 *
-	 * @return the sdas response
-	 */
-	public SdasResponse perform()
+	public SdasResponse execute()
 	{
-		return HttpHelper.sendData(this.requestType, this.json);
-		
+		SdasResponse response = HttpHelper.sendData(this.requestType, this.json);
+		return response;
 	}
 	
 

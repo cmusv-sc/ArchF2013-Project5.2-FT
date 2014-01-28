@@ -71,7 +71,7 @@ private JsonObject populateJson(String device_id, String lat, String lng)
  	private void addDevice(JsonObject json)
 	 {
 		 SdasRequest sdasRequest = new SdasRequest(SdasRequest.ADD_DEVICE, json);
-		 new SdasPlatformFacacde().execute(sdasRequest);
+	//	 new SdasPlatformFacacde().execute(sdasRequest);
 		
 		 
 		 // Will not work for new API need to handle the response code here
