@@ -11,11 +11,11 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+
+import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -34,9 +34,10 @@ public class HttpHelper {
 	 * @throws Exception the exception
 	 */
 	private static SdasResponse httpPostJson(String urlStr,
-			JsonObject jsonObject) throws Exception {
+			JsonElement jsonObject) throws Exception {
 
 		URL url = new URL(urlStr);
+		Log.d("URL", urlStr);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/json");
@@ -55,12 +56,11 @@ public class HttpHelper {
 			writer.close();
 			out.close();
 		}
-
 		SdasResponse sdasResponse = new SdasResponse(
 				connection.getResponseCode());
 
 		
-		if (connection.getResponseCode() != 200) {
+		if (connection.getResponseCode() != 201) {
 			throw new IOException(connection.getResponseMessage());
 		}
 		StringBuilder sb;
@@ -89,7 +89,7 @@ public class HttpHelper {
 	 * @param json the json
 	 * @return the sdas response
 	 */
-	public static SdasResponse sendData(String requestType, JsonObject json) {
+	public static SdasResponse sendData(String requestType, JsonElement json) {
 		try {
 			String url = Constants.DEBUG_URL + requestType;
 			return HttpHelper.httpPostJson(url, json);

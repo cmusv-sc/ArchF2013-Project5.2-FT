@@ -3,8 +3,6 @@
  */
 package edu.cmu.sv.smartsense;
 
-import android.os.AsyncTask;
-
 
 // TODO: Auto-generated Javadoc
 /**

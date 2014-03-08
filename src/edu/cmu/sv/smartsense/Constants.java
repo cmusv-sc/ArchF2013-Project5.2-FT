@@ -29,7 +29,7 @@ public final class Constants {
 	
 	
 	/** The Constant DEBUG_URL. */
-	public static final String DEBUG_URL = "http://einstein.sv.cmu.edu/";
+	public static final String DEBUG_URL = "http://einstein.sv.cmu.edu:9000/";
 	
 	/** The Constant PRODUCITON_URL. */
 	public static final String PRODUCITON_URL = "http://einstein.sv.cmu.edu:9000/";
@@ -44,27 +44,27 @@ public final class Constants {
 	public final static HashMap<Integer, String> sensorNameMapping;
 	static {
 		sensorNameMapping = new HashMap<Integer, String>();
-		sensorNameMapping.put(Sensor.TYPE_ACCELEROMETER, "Accelerometer");
-		sensorNameMapping.put(Sensor.TYPE_AMBIENT_TEMPERATURE, "Temperature");
-		sensorNameMapping.put(Sensor.TYPE_GRAVITY, "Gravity");
-		sensorNameMapping.put(Sensor.TYPE_GYROSCOPE, "Gyroscope");
-		sensorNameMapping.put(Sensor.TYPE_GYROSCOPE_UNCALIBRATED, "Gyroscope");
-		sensorNameMapping.put(Sensor.TYPE_LIGHT, "Light");
+		sensorNameMapping.put(Sensor.TYPE_ACCELEROMETER, "androidAccelerometer");
+		sensorNameMapping.put(Sensor.TYPE_AMBIENT_TEMPERATURE, "androidTemperature");
+		sensorNameMapping.put(Sensor.TYPE_GRAVITY, "androidGravity");
+		sensorNameMapping.put(Sensor.TYPE_GYROSCOPE, "androidGyroscope");
+		sensorNameMapping.put(Sensor.TYPE_GYROSCOPE_UNCALIBRATED, "androidGyroscope");
+		sensorNameMapping.put(Sensor.TYPE_LIGHT, "androidLight");
 		sensorNameMapping.put(Sensor.TYPE_LINEAR_ACCELERATION,
-				"LinearAcceleration");
-		sensorNameMapping.put(Sensor.TYPE_MAGNETIC_FIELD, "MageneticField");
+				"androidLinearAcceleration");
+		sensorNameMapping.put(Sensor.TYPE_MAGNETIC_FIELD, "androidMageneticField");
 		sensorNameMapping.put(Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED,
-				"MageneticField");
-		sensorNameMapping.put(Sensor.TYPE_PROXIMITY, "Proximity");
-		sensorNameMapping.put(Sensor.TYPE_PRESSURE, "Pressure");
-		sensorNameMapping.put(Sensor.TYPE_RELATIVE_HUMIDITY, "Humidity");
-		sensorNameMapping.put(Sensor.TYPE_ROTATION_VECTOR, "RotationVector");
-		sensorNameMapping.put(Sensor.TYPE_GAME_ROTATION_VECTOR, "GameRotationVector");
+				"androidMageneticField");
+		sensorNameMapping.put(Sensor.TYPE_PROXIMITY, "androidProximity");
+		sensorNameMapping.put(Sensor.TYPE_PRESSURE, "androidPressure");
+		sensorNameMapping.put(Sensor.TYPE_RELATIVE_HUMIDITY, "androidHumidity");
+		sensorNameMapping.put(Sensor.TYPE_ROTATION_VECTOR, "androidRotationVector");
+		sensorNameMapping.put(Sensor.TYPE_GAME_ROTATION_VECTOR, "androidGameRotationVector");
 		// Deprecated from API LEVEL 8. 
 		// The way to do this is to provide a configuration page to configure
 		// what sensor values need to be sent
 		
-		sensorNameMapping.put(Sensor.TYPE_ORIENTATION, "OrientationVector");
+		sensorNameMapping.put(Sensor.TYPE_ORIENTATION, "androidOrientationVector");
 
 	}
 	

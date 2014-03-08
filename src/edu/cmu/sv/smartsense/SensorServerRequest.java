@@ -2,8 +2,10 @@ package edu.cmu.sv.smartsense;
 
 import java.util.Date;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
 
 public class SensorServerRequest implements Runnable {
@@ -20,17 +22,23 @@ public class SensorServerRequest implements Runnable {
 	public void run() {
 		Date date = new java.util.Date();
 		long timestamp = date.getTime();
+		JsonArray obj = new JsonArray();
 		
 		JsonObject sensorDataJson = new JsonObject();
 
-		sensorDataJson.addProperty("id", Configuration.getInstance()
-								.get_device_id());
-		sensorDataJson.addProperty(this.name, this.values[0]);
+		/*sensorDataJson.addProperty("sensorName", Configuration.getInstance()
+								.get_device_id());*/
+		sensorDataJson.addProperty("sensorName",name);
 		sensorDataJson.addProperty("timestamp", timestamp);
+		sensorDataJson.addProperty("value", String.valueOf(this.values[0]));
+		//sensorDataJson.addProperty(this.name, this.values[0]);
 		
-		System.out.println(new Gson().toJson(sensorDataJson));
+		obj.add(sensorDataJson);
+		
+		
+		Log.d("DeviceData",new Gson().toJson(obj));
 						
-		SdasRequest req = new SdasRequest(SdasRequest.PUBLISH_SENSOR_READING, sensorDataJson);
+		SdasRequest req = new SdasRequest(SdasRequest.PUBLISH_SENSOR_READING, obj);
 						
 		req.execute();
 //		
