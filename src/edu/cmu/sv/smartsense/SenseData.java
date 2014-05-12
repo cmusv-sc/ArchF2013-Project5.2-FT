@@ -35,6 +35,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -93,6 +94,8 @@ super.onCreate(savedInstanceState);
 setContentView(R.layout.activity_sense_data);
 mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 mSensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+
+getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 ht = new Hashtable<Integer, float[]>();
 

@@ -1,5 +1,5 @@
 /*
- * 
+ * This product was created for CMU SV
  */
 package edu.cmu.sv.smartsense;
 
